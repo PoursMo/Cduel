@@ -1,13 +1,32 @@
 #include "game.h"
 #include "samurai.h"
 #include "colors.h"
+#include "action.h"
+
+void enter_continue()
+{
+    printf("Press enter to continue");
+    fflush(stdout);
+    char c;
+    while (c = getchar(), c != '\n' && c != EOF);
+    system("clear");
+}
 
 void print_samurai_health(samurai samurai)
 {
-    int size = 50;
-    int perc = samurai.health * size / samurai.max_health;
     int i = 0;
-    printf("%s's health\t|", samurai.name);
+    printf("%s's health:\t", samurai.name);
+    while(i++ < samurai.health)
+        printf("@ ");
+    printf("\n");
+}
+
+void print_samurai_poise(samurai samurai)
+{
+    int size = 50;
+    int perc = samurai.poise * size / samurai.max_poise;
+    int i = 0;
+    printf("%s's poise:\t|", samurai.name);
     while(i < size)
     {
         if(i < perc)
@@ -17,61 +36,6 @@ void print_samurai_health(samurai samurai)
         i++;
     }
     printf("|\n");
-}
-
-void print_samurai_poise(samurai samurai)
-{
-    int size = 50;
-    int perc = samurai.poise * size / samurai.max_poise;
-    int i = 0;
-    printf("%s's poise\t|", samurai.name);
-    while(i < size)
-    {
-        if(i < perc)
-            printf("@");
-        else
-            printf(" ");
-        i++;
-    }
-    printf("|\n");
-}
-
-void move_player_left(samurai *player, samurai *opponent, int value)
-{
-    if(player->x - value < 0)
-    {
-        opponent->x += player->x;
-        player->x = 0;
-    }
-    else
-    {
-        player->x -= value;
-        opponent->x += value;
-    }
-}
-
-void move_player_right(samurai *player, samurai *opponent, int value)
-{
-    if(opponent->x - value < 0)
-        value = opponent->x;
-    player->x += value;
-    opponent->x -= value;
-}
-
-void move_opponent_left(samurai *player, samurai *opponent, int value)
-{
-    if(opponent->x - value < 0)
-        opponent->x = 0;
-    else
-        opponent->x -= value;
-}
-
-void move_opponent_right(samurai *player, samurai *opponent, int value)
-{
-    if(opponent->x + player->x + value > 32)
-        opponent->x = 32 - player->x;
-    else
-        opponent->x += value;
 }
 
 void print_samurais(samurai player, samurai opponent)
@@ -91,6 +55,7 @@ void get_player_name(samurai *player)
     printf("Type in your character name (max 19 characters):\n");
     fflush(stdout);
     scanf("%s", name);
+    while (getchar() != '\n');
     if(strlen(name) > 19)
     {
         printf("Too many characters\n");
@@ -103,38 +68,58 @@ void get_player_name(samurai *player)
     printf("Your name is %s\n", player->name);
 }
 
-void setup()
+samurai generate_opponent(int playerx)
 {
-    srand(time(NULL));
+    samurai opponent = {.x = 32 - playerx, .health = 2, .max_poise = 10, .poise = 10};
+    strcat(opponent.name, RED);
+    strcat(opponent.name, opponent_names[rand() % 10]);
+    strcat(opponent.name, RESET);
+    return opponent;
 }
 
 int main()
 {
-    setup();
-    samurai player, opponent;
-    player.x = 5;
-    opponent.x = 5;
-    player.max_health = 20;
-    player.health = 8;
-    player.max_poise = 30;
-    player.poise = 26;
+    srand(time(NULL));
+    samurai player = {.x = 0, .health = 3, .max_poise = 10, .poise = 10, .is_player = 1};
     get_player_name(&player);
-    strcat(opponent.name, RED);
-    strcat(opponent.name, opponent_names[rand() % 10]);
-    strcat(opponent.name, RESET);
-    printf("%s has entered the dojo", opponent.name);
-    char input;
-    while(scanf(" %c",&input))
+    enter_continue();
+    samurai opponent = generate_opponent(player.x);
+    printf("%s has entered the dojo\n", opponent.name);
+    enter_continue();
+    char c;
+    while(1)
     {
-        system("clear");
-        if(input == 'a')
-            move_player_left(&player, &opponent, 1);
-        if(input == 'd')
-            move_player_right(&player, &opponent, 1);
         print_samurais(player, opponent);
-        printf("\n");
+        print_samurai_health(opponent);
+        print_samurai_poise(opponent);
         print_samurai_health(player);
         print_samurai_poise(player);
-    }
-    
+        printf("\na: move left  d: move right  w: attack  s: parry\n");
+        c = getchar();
+        system("clear");
+        if(c == 'a')
+            player.action = actions.move_left;
+        else if(c == 'd')
+            player.action = actions.move_right;
+        else if(c == 'w')
+            player.action = actions.attack;
+        else if(c == 's')
+            player.action = actions.parry;
+        else
+        {
+            printf("Use a correct key\n");
+            continue;
+        }
+        opponent.action = pick_random_action();
+        if(player.action == actions.attack)
+        {
+            do_action(&opponent, &player);
+            do_action(&player, &opponent);
+        }
+        else
+        {
+            do_action(&player, &opponent);
+            do_action(&opponent, &player);
+        }
+    }    
 }
