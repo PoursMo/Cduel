@@ -1,0 +1,2 @@
+- posture 0 : skip turn
+- 

@@ -69,4 +69,7 @@
 #define UNDERLINE "\033[4m"
 #define REVERSED "\033[7m"  // Reversed colors
 
+#define PLAYER_COLOR BLUE
+#define OPPONENT_COLOR MAGENTA
+
 #endif

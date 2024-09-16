@@ -24,6 +24,7 @@ static void move_player_right(samurai *player, samurai *opponent, int value)
 
 static void move_opponent_left(samurai *player, samurai *opponent, int value)
 {
+    player = player; //Useless
     if(opponent->x - value < 0)
         opponent->x = 0;
     else
@@ -38,7 +39,7 @@ static void move_opponent_right(samurai *player, samurai *opponent, int value)
         opponent->x += value;
 }
 
-const struct actions_t actions = {do_attack, do_parry, do_move_left, do_move_right};
+const struct actions_t actions = {do_attack, do_parry, do_move_left, do_move_right, do_focus};
 
 void *pick_random_action()
 {
@@ -47,6 +48,7 @@ void *pick_random_action()
         actions.parry,
         actions.move_left,
         actions.move_right,
+        actions.focus,
     };
     return action_array[rand() % sizeof(action_array) / sizeof(void*)];
 }
@@ -56,19 +58,28 @@ void do_action(samurai *doer, samurai *other)
     doer->action(doer, other);
 }
 
+void do_focus(samurai *doer, samurai *other)
+{
+    other = other; //Useless
+    printf("%s focuses\n", doer->name);
+    increase_posture(doer, 3);
+}
+
 void do_attack(samurai *doer, samurai *other)
 {
+    reduce_posture(doer, 2);
     if((doer->is_player && other->x <= 1) || (!doer->is_player && doer->x <= 1))
     {
         if(other->action == actions.parry)
         {
             printf("%s's attack got parried\n", doer->name);
-            doer->poise -= 3;
+            reduce_posture(doer, 2);
+            reduce_posture(other, 2);
         }
         else
         {
             printf("%s swings his blade\n", doer->name);
-            other->health -= 1;
+            reduce_health(other, 1);
         }
     }
     else
@@ -77,6 +88,7 @@ void do_attack(samurai *doer, samurai *other)
 
 void do_parry(samurai *doer, samurai *other)
 {
+    other = other; //Useless
     printf("%s parries\n", doer->name);
 }
 
