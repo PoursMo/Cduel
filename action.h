@@ -11,12 +11,14 @@ struct actions_t {
     void (*move_left)(samurai*, samurai*);
     void (*move_right)(samurai*, samurai*);
     void (*focus)(samurai*, samurai*);
+    void (*recover)(samurai*, samurai*);
 };
 
 extern const struct actions_t actions;
 
 void *pick_random_action();
 void do_action(samurai *doer, samurai *other);
+void do_recover(samurai *doer, samurai *other);
 void do_focus(samurai *doer, samurai *other);
 void do_attack(samurai *doer, samurai *other);
 void do_parry(samurai *doer, samurai *other);

@@ -106,15 +106,6 @@ void get_player_name(samurai *player)
     printf("\n");
 }
 
-samurai generate_opponent(int playerx)
-{
-    samurai opponent = {.x = 32 - playerx, .health = 2, .max_posture = 10, .posture = 10};
-    strcpy(opponent.name, opponent_names[rand() % 10]);
-    print_samurai_name(opponent);
-    printf(" has entered the dojo\n");
-    return opponent;
-}
-
 char get_player_input()
 {
     char c = 0;
@@ -137,6 +128,28 @@ char get_player_input()
     return c;
 }
 
+void *get_player_action()
+{
+    char player_input = get_player_input();
+    if(player_input == 'a')
+        return actions.move_left;
+    if(player_input == 'd')
+        return actions.move_right;
+    if(player_input == 'w')
+        return actions.attack;
+    if(player_input == 's')
+        return actions.parry;
+    if(player_input == 'f')
+        return actions.focus;
+    else
+        return NULL;
+}
+
+void flush_getchar()
+{
+    while(getchar() != '\n');
+}
+
 void game()
 {
     //setup
@@ -145,6 +158,7 @@ void game()
     //player creation
     samurai player = {.x = 0, .health = 3, .max_posture = 10, .posture = 10, .is_player = 1};
     get_player_name(&player);
+    //game loop
     while(player.health > 0)
     {
         enter_continue();
@@ -158,19 +172,19 @@ void game()
             printf("\n");
             print_samurai_stats(opponent);
             printf("\n");
-            char player_input = get_player_input();
+            if(player.posture > 0)
+                player.action = get_player_action();
+            else
+            {
+                printf("Your posture is broken, press enter to continue");
+                player.action = actions.recover;
+            }
+            flush_getchar();
             system("clear");
-            if(player_input == 'a')
-                player.action = actions.move_left;
-            if(player_input == 'd')
-                player.action = actions.move_right;
-            if(player_input == 'w')
-                player.action = actions.attack;
-            if(player_input == 's')
-                player.action = actions.parry;
-            if(player_input == 'f')
-                player.action = actions.focus;
-            opponent.action = pick_random_action();
+            if(opponent.posture > 0)
+                opponent.action = pick_random_action();
+            else
+                opponent.action = actions.recover;
             if(player.action == actions.attack)
             {
                 do_action(&opponent, &player);

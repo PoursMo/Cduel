@@ -2,6 +2,8 @@
 #define SAMURAI_H
 
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
 extern const char *opponent_names[10];
 
@@ -18,5 +20,6 @@ typedef struct samurai
 void reduce_health(samurai *samurai, int value);
 void reduce_posture(samurai *samurai, int value);
 void increase_posture(samurai *samurai, int value);
+samurai generate_opponent(int playerx);
 
 #endif

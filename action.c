@@ -39,7 +39,7 @@ static void move_opponent_right(samurai *player, samurai *opponent, int value)
         opponent->x += value;
 }
 
-const struct actions_t actions = {do_attack, do_parry, do_move_left, do_move_right, do_focus};
+const struct actions_t actions = {do_attack, do_parry, do_move_left, do_move_right, do_focus, do_recover};
 
 void *pick_random_action()
 {
@@ -49,6 +49,7 @@ void *pick_random_action()
         actions.move_left,
         actions.move_right,
         actions.focus,
+        actions.recover,
     };
     return action_array[rand() % sizeof(action_array) / sizeof(void*)];
 }
@@ -56,6 +57,13 @@ void *pick_random_action()
 void do_action(samurai *doer, samurai *other)
 {
     doer->action(doer, other);
+}
+
+void do_recover(samurai *doer, samurai *other)
+{
+    other = other; //Useless
+    printf("%s is recovering from broken posture\n", doer->name);
+    increase_posture(doer, 3);
 }
 
 void do_focus(samurai *doer, samurai *other)
@@ -75,6 +83,10 @@ void do_attack(samurai *doer, samurai *other)
             printf("%s's attack got parried\n", doer->name);
             reduce_posture(doer, 2);
             reduce_posture(other, 2);
+        }
+        else if(other->action == actions.attack)
+        {
+            printf("%s's blade bounced on %s's blade\n", doer->name, other->name);
         }
         else
         {
