@@ -1,4 +1,2 @@
-- posture 0 : skip turn
-- opponent AI
-- always print colored names
 - sometimes player dies weird ?
+- opponent AI

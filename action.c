@@ -41,19 +41,6 @@ static void move_opponent_right(samurai *player, samurai *opponent, int value)
 
 const struct actions_t actions = {do_attack, do_parry, do_move_left, do_move_right, do_focus, do_recover};
 
-void *pick_random_action()
-{
-    void (*action_array[])(samurai*, samurai*) = {
-        actions.attack,
-        actions.parry,
-        actions.move_left,
-        actions.move_right,
-        actions.focus,
-        actions.recover,
-    };
-    return action_array[rand() % sizeof(action_array) / sizeof(void*)];
-}
-
 void do_action(samurai *doer, samurai *other)
 {
     doer->action(doer, other);
@@ -90,7 +77,7 @@ void do_attack(samurai *doer, samurai *other)
         }
         else
         {
-            printf("%s swings his blade\n", doer->name);
+            printf("%s swings his blade and hits %s\n", doer->name, other->name);
             reduce_health(other, 1);
         }
     }

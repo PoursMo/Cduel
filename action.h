@@ -3,7 +3,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "samurai.h"
+#include "print.h"
 
 struct actions_t {
     void (*attack)(samurai*, samurai*);

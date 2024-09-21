@@ -6,4 +6,10 @@
 #include <string.h>
 #include <time.h>
 
+#include "samurai.h"
+#include "action.h"
+#include "colors.h"
+#include "print.h"
+#include "utils.h"
+
 #endif
