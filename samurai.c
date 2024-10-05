@@ -5,7 +5,7 @@ static void on_death(samurai *samurai)
     printf("%s is dead\n", samurai->name);
 }
 
-const char *opponent_names[10] = {"Jean", "Claude", "Pierre", "Roger", "Alain", "Louis", "Gaston", "Benoit", "Nicolas", "Henri"};
+const char *opponent_names[11] = {"Jean", "Claude", "Pierre", "Roger", "Alain", "Louis", "Gaston", "Benoit", "Nicolas", "Henri", "Manon"};
 
 void reduce_health(samurai *samurai, int value)
 {

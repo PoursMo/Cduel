@@ -48,6 +48,19 @@ void *get_player_action()
         return NULL;
 }
 
+void *pick_random_action()
+{
+    void (*action_array[])(samurai*, samurai*) = {
+        actions.attack,
+        actions.parry,
+        actions.move_left,
+        actions.move_right,
+        actions.focus,
+        actions.recover,
+    };
+    return action_array[rand() % sizeof(action_array) / sizeof(void*)];
+}
+
 void game()
 {
     //setup

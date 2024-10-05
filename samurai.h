@@ -7,7 +7,7 @@
 
 #include "utils.h"
 
-extern const char *opponent_names[10];
+extern const char *opponent_names[11];
 
 typedef struct samurai
 {

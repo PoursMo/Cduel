@@ -1,2 +1,2 @@
-- sometimes player dies weird ?
+- player death
 - opponent AI
